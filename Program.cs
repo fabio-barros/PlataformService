@@ -16,6 +16,8 @@ else
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 }
 builder.Services.AddScoped<IPlatformRepository, PlatformRepo>();
+builder.Services.AddControllers();
+
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -27,6 +29,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.MapControllers();
 app.UseHttpsRedirection();
 
 PrepDb.PrepPopulation(app);
