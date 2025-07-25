@@ -1,0 +1,55 @@
+# Build results
+bin/
+obj/
+out/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio files
+*.vs/
+.vs/
+
+# VS Code settings
+.vscode/
+
+# ASP.NET Core secrets
+secrets.json
+
+# Logs
+*.log
+logs/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Publish output
+publish/
+*.publish/
+
+# Rider IDE files
+.idea/
+*.sln.iml
+
+# Test results
+TestResults/
+*.trx
+
+# NuGet packages
+*.nupkg
+packages/
+.nuget/
+
+# Entity Framework Migrations
+Migrations/
+
+# Others
+*.swp
+*.bak
+
+# HTTP request files (optional, remove if you want to keep .http files in git)
+.fake

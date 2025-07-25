@@ -1,19 +1,25 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PlatformService.Data.Interfaces;
 using PlatformService.Dtos;
 using PlatformService.Models;
+using PlatformService.SyncDataServices.Http;
 
 namespace PlatformService.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PlatformsController(IPlatformRepository repository, IMapper mapper) : ControllerBase
+    public class PlatformsController(
+        IPlatformRepository repository,
+        IMapper mapper,
+        ICommandDataClient commandDataClient) : ControllerBase
     {
         private readonly IPlatformRepository _repository = repository;
         private readonly IMapper _mapper = mapper;
+        private readonly ICommandDataClient _commandDataClient = commandDataClient;
 
         // GET: api/platforms
         [HttpGet]
@@ -38,7 +44,7 @@ namespace PlatformService.Controllers
 
         // POST: api/platforms
         [HttpPost]
-        public ActionResult<PlatformReadDto> CreatePlatform(PlatformCreateDto platformCreateDto)
+        public async Task<ActionResult<PlatformReadDto>> CreatePlatform(PlatformCreateDto platformCreateDto)
         {
             if (platformCreateDto == null)
             {
@@ -51,6 +57,18 @@ namespace PlatformService.Controllers
             _repository.SaveChanges();
 
             var platformReadDto = _mapper.Map<PlatformReadDto>(platformModel);
+
+            // Send the created platform to the command service
+            try
+            {
+                await _commandDataClient.SendPlatformToCommandAsync(platformReadDto);
+                Console.WriteLine("--> Sync POST to CommandService was successful");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"--> Could not send synchronously to CommandService: {ex.Message}");
+            }
+
             return CreatedAtRoute(nameof(GetPlatformById), new { id = platformReadDto.Id }, platformReadDto);
         }
 
